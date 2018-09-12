@@ -19,20 +19,19 @@ gameStarter.addEventListener("click", () => {
 })
 
 let claimTile = function(){
-		if(content[parseInt(this.id.charAt(4))]==""&&gameOngoing){
-			if(player1turn){
-				content[parseInt(this.id.charAt(4))]=chosenMark;
-				document.getElementById(this.id).innerHTML = chosenMark;
-				if(!hasAI) player1turn=false;
-			}
-			else{
-				player1turn=true;
-				content[parseInt(this.id.charAt(4))]=otherMark;
-				document.getElementById(this.id).innerHTML = otherMark;
-			}
-			if(hasAI && countBlanks().length>0 && !detectWinner()) makeAImove();
-			if(!detectWinner() && countBlanks().length==0) declareDraw();
-		}
+  const chosenSpot = parseInt(this.id.charAt(4));
+  if(content[chosenSpot]==""&&gameOngoing){
+    document.getElementById(this.id).innerHTML = player1turn ? chosenMark : otherMark;
+    content[chosenSpot] = player1turn ? chosenMark : otherMark;
+    if(player1turn){
+      if(!hasAI) player1turn=false;
+    }
+		else player1turn=true;
+		
+    const emptySpots = countBlanks();
+    if(hasAI && emptySpots.length>0 && !detectWinner()) makeAImove();
+    if(!detectWinner() && emptySpots.length==0) declareDraw();
+  }
 }
 
 Array.from(tiles, tile => tile.addEventListener("click", claimTile));
@@ -42,7 +41,6 @@ function countBlanks(){
 	for(let ctr=0;ctr<9;ctr++){
 		if(content[ctr]=="") spots.push(ctr);
 	}
-  console.log(spots);
 	return (spots);
 }
 
