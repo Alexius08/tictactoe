@@ -1,60 +1,62 @@
-var content=["","","","","","","","",""], player1turn=true, gameOngoing=true, chosenMark="X", otherMark="O";
+let content=Array(9).fill(""), player1turn=true, gameOngoing=true, chosenMark="X", otherMark="O", hasAI = true;
 
-$(document).ready(function(){
-	var hasAI=true;
-  $("#oneplayer").click(function(){
-    if(!gameOngoing)hasAI=true;
-  });
-  $("#twoplayers").click(function(){
-    if(!gameOngoing)hasAI=false;
-  });
-	$("td").click(function(){
-		if(content[parseInt(this.id.charAt(4))]==""&&gameOngoing){
-			if(player1turn){
-				content[parseInt(this.id.charAt(4))]=chosenMark;
-				$("#"+this.id).html(chosenMark);
-				if(!hasAI) player1turn=false;
-			}
-			else{
-				player1turn=true;
-				content[parseInt(this.id.charAt(4))]=otherMark;
-				$("#"+this.id).html(otherMark);
-			}
-			if(hasAI && detectEmptySpots().length>0 && !detectWinner()) makeAImove();
-			if(!detectWinner() && detectEmptySpots().length==0) declareDraw();
+const gameResult = document.getElementById("result");
+const gameStarter = document.getElementById("startgame");
+const mark = document.getElementById("chosenmark");
+const tiles = document.getElementsByTagName("TD");
+
+gameStarter.addEventListener("click", () => {
+  hasAI = document.querySelector('input[name="playercount"]:checked').value == "1p";
+  gameOngoing = true;
+  player1turn = (Math.floor(Math.random()*2)<1);
+  content = Array(9).fill("");
+  Array.from(tiles, tile => tile.innerHTML = "");
+  gameResult.innerHTML = "";
+  gameStarter.innerHTML = "Restart";
+  chosenMark = mark.value;
+  otherMark = mark.value=="X" ? "O" : "X";
+  if(hasAI&&!player1turn) makeAImove();
+})
+
+let claimTile = function(){
+	if(content[parseInt(this.id.charAt(4))]==""&&gameOngoing){
+		if(player1turn){
+			content[parseInt(this.id.charAt(4))]=chosenMark;
+			document.getElementById(this.id).innerHTML = chosenMark;
+			if(!hasAI) player1turn=false;
 		}
-	});
-	$("#startgame").click(function(){
-		gameOngoing=true;
-		player1turn=(Math.floor(Math.random()*2)<1);
-		content=["","","","","","","","",""];
-		$("td").html("");
-		$("#result").html("");
-		$("#startgame").html("Restart");
-    chosenMark=$("#chosenmark").find(":selected").text();
-    otherMark=($("#chosenmark").find(":selected").text()=="X")?"O":"X";
-		if(hasAI&&!player1turn) makeAImove();
-	});
-});
-
-function detectEmptySpots(){
-	var emptySpots=[];
-	for(var ctr=0;ctr<9;ctr++){
-		if(content[ctr]=="") emptySpots.push(ctr);
+		else{
+			player1turn=true;
+			content[parseInt(this.id.charAt(4))]=otherMark;
+			document.getElementById(this.id).innerHTML = otherMark;
+		}
+		if(hasAI && countBlanks().length>0 && !detectWinner()) makeAImove();
+		if(!detectWinner() && countBlanks().length==0) declareDraw();
 	}
-	return (emptySpots);
+}
+
+Array.from(tiles, tile => tile.addEventListener("click", claimTile));
+
+function countBlanks(){
+	let spots=[];
+	for(let ctr=0;ctr<9;ctr++){
+		if(content[ctr]=="") spots.push(ctr);
+	}
+  console.log(spots);
+	return (spots);
 }
 
 function makeAImove(){
-	var chosenSpot = detectEmptySpots()[Math.floor(detectEmptySpots().length*Math.random())];
-	$("#cell"+chosenSpot).append(otherMark);
-	content[chosenSpot]=otherMark;
+  const emptySpots = countBlanks();
+	const chosenSpot = emptySpots[Math.floor(emptySpots.length*Math.random())];
+  document.getElementById(`cell${chosenSpot}`).innerHTML = otherMark;
+	content[chosenSpot] = otherMark;
 	player1turn=true;
 }
 
 function declareDraw(){
 	gameIsOver();
-	$("#result").html("Draw");
+  gameResult.innerHTML = "Draw";
 }
 
 function detectWinner(){
@@ -70,12 +72,12 @@ function detectWinner(){
 }
 
 function gameIsOver(){
-	$("#startgame").html("Play again");
+  gameStarter.innerHTML = "Play again";
 	gameOngoing=false;
 }
 
 function declareWinner(winnerID){
 	gameIsOver();
-	$("#result").html((winnerID==chosenMark)?"Player 1 wins":"Player 2 wins");
+  gameResult.innerHTML = `Player ${winnerID==chosenMark ? "1" : "2"} wins`;
 	return true;
 }
