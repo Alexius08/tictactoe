@@ -58,15 +58,20 @@ function declareDraw(){
 }
 
 function detectWinner(){
-	if(content[0]==content[1]&&content[1]==content[2]&&content[0]!="") return declareWinner(content[0]);
-	else if(content[3]==content[4]&&content[4]==content[5]&&content[3]!="") return declareWinner(content[3]);
-	else if(content[6]==content[7]&&content[7]==content[8]&&content[6]!="") return declareWinner(content[6]);
-	else if(content[0]==content[3]&&content[3]==content[6]&&content[0]!="") return declareWinner(content[0]);
-	else if(content[1]==content[4]&&content[4]==content[7]&&content[1]!="") return declareWinner(content[1]);
-	else if(content[2]==content[5]&&content[5]==content[8]&&content[2]!="") return declareWinner(content[2]);
-	else if(content[0]==content[4]&&content[4]==content[8]&&content[0]!="") return declareWinner(content[0]);
-	else if(content[2]==content[4]&&content[4]==content[6]&&content[2]!="") return declareWinner(content[2]);
+	if(matchPattern(0,1,2)) return declareWinner(content[0]);
+	else if(matchPattern(3,4,5)) return declareWinner(content[3]);
+	else if(matchPattern(6,7,8)) return declareWinner(content[6]);
+	else if(matchPattern(0,3,6)) return declareWinner(content[0]);
+	else if(matchPattern(1,4,7)) return declareWinner(content[1]);
+	else if(matchPattern(2,5,8)) return declareWinner(content[2]);
+	else if(matchPattern(0,4,8)) return declareWinner(content[0]);
+	else if(matchPattern(2,4,6)) return declareWinner(content[2]);
 	else return false;
+}
+
+function matchPattern(tile1, tile2, tile3){
+  if (content[tile1]=="") return false; //avoid matching empty tiles
+  return (content[tile1] == content[tile2] && content[tile2] == content[tile3]);
 }
 
 function gameIsOver(){
