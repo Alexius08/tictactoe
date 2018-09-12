@@ -26,11 +26,10 @@ let claimTile = function(){
     if(player1turn){
       if(!hasAI) player1turn=false;
     }
-		else player1turn=true;
+    else player1turn=true;
 		
-    const emptySpots = countBlanks();
-    if(hasAI && emptySpots.length>0 && !detectWinner()) makeAImove();
-    if(!detectWinner() && emptySpots.length==0) declareDraw();
+    if(hasAI && countBlanks().length>0 && !detectWinner()) makeAImove();
+    if(!detectWinner() && countBlanks().length==0) declareDraw();
   }
 }
 
