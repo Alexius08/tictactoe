@@ -1,4 +1,4 @@
-let content=Array(9).fill(""), player1turn=true, gameOngoing=true, chosenMark="X", otherMark="O", hasAI = true;
+let content=Array(9).fill(""), player1turn=true, gameOngoing=false, chosenMark="X", otherMark="O", hasAI = true;
 
 const gameResult = document.getElementById("result");
 const gameStarter = document.getElementById("startgame");
@@ -19,20 +19,20 @@ gameStarter.addEventListener("click", () => {
 })
 
 let claimTile = function(){
-	if(content[parseInt(this.id.charAt(4))]==""&&gameOngoing){
-		if(player1turn){
-			content[parseInt(this.id.charAt(4))]=chosenMark;
-			document.getElementById(this.id).innerHTML = chosenMark;
-			if(!hasAI) player1turn=false;
+		if(content[parseInt(this.id.charAt(4))]==""&&gameOngoing){
+			if(player1turn){
+				content[parseInt(this.id.charAt(4))]=chosenMark;
+				document.getElementById(this.id).innerHTML = chosenMark;
+				if(!hasAI) player1turn=false;
+			}
+			else{
+				player1turn=true;
+				content[parseInt(this.id.charAt(4))]=otherMark;
+				document.getElementById(this.id).innerHTML = otherMark;
+			}
+			if(hasAI && countBlanks().length>0 && !detectWinner()) makeAImove();
+			if(!detectWinner() && countBlanks().length==0) declareDraw();
 		}
-		else{
-			player1turn=true;
-			content[parseInt(this.id.charAt(4))]=otherMark;
-			document.getElementById(this.id).innerHTML = otherMark;
-		}
-		if(hasAI && countBlanks().length>0 && !detectWinner()) makeAImove();
-		if(!detectWinner() && countBlanks().length==0) declareDraw();
-	}
 }
 
 Array.from(tiles, tile => tile.addEventListener("click", claimTile));
